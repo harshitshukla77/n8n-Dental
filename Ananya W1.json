@@ -1,0 +1,260 @@
+{
+  "name": "Ananya W1",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Registration Details",
+        "formDescription": "Kindly fill the details ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "Ananya Jain",
+              "defaultValue": "Ananya Jain",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Contact ",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Age",
+              "placeholder": "22"
+            },
+            {
+              "fieldLabel": "Date Of Birth",
+              "fieldType": "date",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email Address",
+              "fieldType": "email",
+              "placeholder": "ananyajain@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "ID",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false,
+          "useWorkflowTimezone": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -96,
+        16
+      ],
+      "id": "4e45dc38-026a-417d-9c53-f3f6ca5c03fb",
+      "name": "On form submission",
+      "webhookId": "4e4f95b4-2a41-4475-9fa2-45482785b410"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.column_values[2].text }}",
+        "subject": "=Contact Required ",
+        "message": "=Hello {{$json.name}},  We noticed your phone number is missing from our records.  Please update your phone number so we can complete your profile.  Thank you. Here is the link :   https://wkf.ms/3LVs5d0?text_mm091a91={{ $json.column_values[3].text }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        -176
+      ],
+      "id": "d2fe80ca-7a4e-41da-b44a-10c1741391f9",
+      "name": "Send a message",
+      "webhookId": "a350ac57-4f41-4400-862a-84c2be2b978c",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "vR57UUBrMjvtmbHi",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        -160
+      ],
+      "id": "e35d814f-83ff-4907-99f6-127c0ed64fdf",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "operation": "getAll",
+        "boardId": "5026301827",
+        "groupId": "topics",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        32,
+        -160
+      ],
+      "id": "ffa2bf7f-4bf2-436a-b788-18a57a8eb13a",
+      "name": "Get many items",
+      "credentials": {
+        "mondayComApi": {
+          "id": "RI7TewCzqovpk1aa",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "440111cd-d5d1-4f6b-9366-d044f2bd0a66",
+              "leftValue": "={{ $json.column_values[1].text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        -160
+      ],
+      "id": "d6188634-afdd-475a-ac12-d9ce0fd5c0cc",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "operation": "changeColumnValue",
+        "boardId": "5026301827",
+        "itemId": "="
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        208,
+        16
+      ],
+      "id": "f0160cd2-dea1-4590-b32c-75200d740bc0",
+      "name": "Change a column value for a board item",
+      "credentials": {
+        "mondayComApi": {
+          "id": "RI7TewCzqovpk1aa",
+          "name": "Monday.com account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "boardItem",
+        "operation": "getAll",
+        "boardId": "5026454388",
+        "groupId": "group_title",
+        "returnAll": true
+      },
+      "type": "n8n-nodes-base.mondayCom",
+      "typeVersion": 1,
+      "position": [
+        -160,
+        -304
+      ],
+      "id": "d01b673d-f590-4beb-8e5f-841c28b51cac",
+      "name": "Get many items1",
+      "credentials": {
+        "mondayComApi": {
+          "id": "RI7TewCzqovpk1aa",
+          "name": "Monday.com account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get many items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many items": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Change a column value for a board item",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "af616110-61cf-4524-9cc9-665ca18ecfc3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "42117d9937b67947616a45505aded7504e215805daf0a88fcd6ef5473b433244"
+  },
+  "id": "sc9w4y7qtMzJyiBvrphkh",
+  "tags": []
+}
